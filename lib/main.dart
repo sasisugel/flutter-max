@@ -1,29 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-import './providers/great_places.dart';
-import './screens/places_list_screen.dart';
-import './screens/add_place_screen.dart';
-import './screens/place_detail_screen.dart';
+import 'package:flutter_complete_guide/screens/auth_screen.dart';
+import 'package:flutter_complete_guide/screens/chat_screen.dart';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider.value(
-      value: GreatPlaces(),
-      child: MaterialApp(
-          title: 'Great Places',
-          theme: ThemeData(
-            primarySwatch: Colors.indigo,
-            accentColor: Colors.amber,
+    return MaterialApp(
+      title: 'FlutterChat',
+      theme: ThemeData(
+        primarySwatch: Colors.pink,
+        backgroundColor: Colors.pink,
+        accentColor: Colors.deepPurple,
+        accentColorBrightness: Brightness.dark,
+        buttonTheme: ButtonTheme.of(context).copyWith(
+          buttonColor: Colors.pink,
+          textTheme: ButtonTextTheme.primary,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
           ),
-          home: PlacesListScreen(),
-          routes: {
-            AddPlaceScreen.routeName: (ctx) => AddPlaceScreen(),
-            PlaceDetailScreen.routeName: (ctx) => PlaceDetailScreen(),
-          }),
+        ),
+      ),
+      home: StreamBuilder(stream: FirebaseAuth.instance.onAuthStateChanged, builder: (ctx, userSnapshot) {
+        if (userSnapshot.hasData) {
+          return ChatScreen();
+        }
+        return AuthScreen();
+      }),
     );
   }
 }
